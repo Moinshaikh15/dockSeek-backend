@@ -1,17 +1,17 @@
 const dbPool = require("../dbConfig");
 const express = require("express");
-
+let router = express.Router();
 //create doctor field
 router.post("/new", async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS patient(id SERIAL PRIMARY KEY,petId VARCHAR(20),Location VARCHAR, Diseases jsonb, )"
+    "CREATE TABLE IF NOT EXISTS patient(id SERIAL PRIMARY KEY,patId VARCHAR(20),Location VARCHAR, pastDiseases jsonb)"
   );
 
-  const { petId, Location, Diseases } = req.body;
+  const { patId, Location, pastDiseases } = req.body;
   console.log(req.body);
   dbPool.query(
-    `INSERT INTO patient(petId,Location,Diseases) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
-    [petId, Location, Diseases],
+    `INSERT INTO patient(patId,Location,pastDiseases) VALUES($1,$2,$3) RETURNING *`,
+    [patId, Location, pastDiseases],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
@@ -54,3 +54,5 @@ router.post("/:docId/update", (req, res) => {
     }
   );
 });
+
+module.exports = router;
