@@ -33,7 +33,7 @@ router.post("/signup", async (req, res) => {
 });
 
 // login
-router.get("/login", (req, res) => {
+router.post("/login", (req, res) => {
   const { email, password } = req.body;
   console.log(req.body);
   dbPool.query(
@@ -70,9 +70,10 @@ router.get("/login", (req, res) => {
                 expiresIn: "3d",
               }
             );
+            existingUser.password = undefined;
             return res
               .status(200)
-              .send({ accessToken, refreshToken, existingUser });
+              .send({ accessToken, refreshToken, userInfo: existingUser });
           }
           return res.status(200).send("passwords does not match");
         }

@@ -4,21 +4,23 @@ let app = express();
 const dbPool = require("./dbConfig.js");
 const authRouter = require("./router/auth");
 const doctorRouter = require("./router/doctor");
-const patientRouter=require('./router/patient')
-const appointmentRouter=require('./router/appointment')
-const jwt=require('jsonwebtoken')
+const patientRouter = require("./router/patient");
+const appointmentRouter = require("./router/appointment");
+const jwt = require("jsonwebtoken");
+const cors = require("cors");
 app.use(morgan("tiny"));
 app.use(express.urlencoded({ extended: false }));
 
 app.listen(process.env.PORT || 8000, () => {
   console.log("app running");
 });
+app.use(cors());
 app.use(express.json());
 app.use("/auth", authRouter);
 app.use(authenticateRequest);
 app.use("/doctor", doctorRouter);
-app.use('/patient',patientRouter)
-app.use('/appointment',appointmentRouter)
+app.use("/patient", patientRouter);
+app.use("/appointment", appointmentRouter);
 
 process.on("connect", async () => {
   console.log("connected");

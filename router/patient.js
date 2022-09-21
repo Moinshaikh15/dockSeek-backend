@@ -38,21 +38,6 @@ router.get("/:patId", (req, res) => {
   );
 });
 
-//update timeSlots
-router.post("/:docId/update", (req, res) => {
-  let docId = req.params.docId;
-  let { TimeSlots } = req.body;
-  dbPool.query(
-    "UPDATE doctors SET TimeSlots=$1 WHERE docId = $2",
-    [TimeSlots, docId],
-    (err, response) => {
-      if (err) {
-        return res.status(400).send(err.stack);
-      } else {
-        return res.status(200).send(response.rows[0]);
-      }
-    }
-  );
-});
+
 
 module.exports = router;
