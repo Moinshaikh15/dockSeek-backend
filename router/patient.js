@@ -1,17 +1,18 @@
 const dbPool = require("../dbConfig");
 const express = require("express");
 let router = express.Router();
-//create doctor field
+
+//create patient field
 router.post("/new", async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS patient(id SERIAL PRIMARY KEY,patId VARCHAR(20),Location VARCHAR, pastDiseases jsonb)"
+    "CREATE TABLE IF NOT EXISTS patient(id SERIAL PRIMARY KEY,patId VARCHAR(20),Location VARCHAR,Age NUMERIC,Weight VARCHAR,BloodGroup VARCHAR,Gender VARCHAR, pastIssues jsonb)"
   );
-
-  const { patId, Location, pastDiseases } = req.body;
+  const { patId, location, age, weight, bloodGroup, gender, pastIssues } =
+    req.body;
   console.log(req.body);
   dbPool.query(
-    `INSERT INTO patient(patId,Location,pastDiseases) VALUES($1,$2,$3) RETURNING *`,
-    [patId, Location, pastDiseases],
+    `INSERT INTO patient(patId,Location,Age,Weight,BloodGroup,Gender,pastIssues) VALUES($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+    [patId, location, age, weight, bloodGroup, gender, pastIssues],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
@@ -22,7 +23,7 @@ router.post("/new", async (req, res) => {
   );
 });
 
-// get doctor Info
+// get patient Info
 router.get("/:patId", (req, res) => {
   let patId = req.params.patId;
   dbPool.query(
@@ -37,7 +38,5 @@ router.get("/:patId", (req, res) => {
     }
   );
 });
-
-
 
 module.exports = router;

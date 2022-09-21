@@ -16,7 +16,7 @@ let router = express.Router();
 // signup
 router.post("/signup", async (req, res) => {
   dbPool.query(
-    "CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), name VARCHAR(30) NOT NULL, email VARCHAR(100) NOT NULL,password VARCHAR NOT NULL)"
+    "CREATE TABLE IF NOT EXISTS users(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), name VARCHAR(30) NOT NULL, email VARCHAR(100) NOT NULL,password VARCHAR NOT NULL,resetcode VARCHAR)"
   );
 
   const { name, email, password, confirmPassword, docId, patId } = req.body;
@@ -129,14 +129,26 @@ router.post("/reqreset", (req, res) => {
     }
   );
   // let id = data.id;
+  let code = makeId(10);
+  dbPool.query(
+    "UPDATE users SET resetcode=$1 WHERE email = $2",
+    [code, email],
+    (err, response) => {
+      if (err) {
+        return res.status(400).send(err.stack);
+      } else {
+        return res.status(200).send(response.rows[0]);
+      }
+    }
+  );
 
   mg.messages
     .create("sandbox3d8591575fb44c8998b1b48fee38b451.mailgun.org", {
       from: "Mailgun Sandbox <shaikhmointest@gmail.com>",
       to: [email],
       subject: "Reset Password",
-      text: `password reset link : http://localhost:3000/reset/${email}`,
-      html: `password reset link : <a href=http://localhost:3000/reset/${email}>Click on link to reset </a>`,
+      text: `password reset link : http://localhost:3000/reset/${code}`,
+      html: `password reset link : <a href=http://localhost:3000/reset/${code}>Click on link to reset </a>`,
     })
     .then((msg) => {
       console.log(msg);
@@ -148,14 +160,14 @@ router.post("/reqreset", (req, res) => {
     });
 });
 
-router.post("/:email/resetpass",async (req, res) => {
-  let email = req.params.email;
+router.post("/:code/resetpass", async (req, res) => {
+  let code = req.params.code;
   let { password } = req.body;
   let salt = await bcryptjs.genSalt(10);
   let hash = await bcryptjs.hash(password, salt);
   dbPool.query(
-    "UPDATE users SET password=$1 WHERE email = $2",
-    [hash, email],
+    "UPDATE users SET password=$1 WHERE resetcode = $2",
+    [hash, code],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
@@ -164,5 +176,30 @@ router.post("/:email/resetpass",async (req, res) => {
       }
     }
   );
+
+  setTimeout(() => {
+    dbPool.query(
+      "UPDATE users SET reset='' WHERE resetcode = $1",
+      [code],
+      (err, resp) => {
+        if (err) {
+          console.log(err);
+        } else {
+          console.log("link has expired");
+        }
+      }
+    );
+  }, 1000000);
 });
+
+function makeId(length) {
+  var result = "";
+  var characters =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  var charactersLength = characters.length;
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength));
+  }
+  return result;
+}
 module.exports = router;

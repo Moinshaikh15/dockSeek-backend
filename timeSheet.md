@@ -23,3 +23,6 @@ Estimated time:8hrs
 10:20-01:10:worked on popup for doc
 01:45-04:00 : worked on popup for doc and password reset
 04:20-05:15: worked on password reset
+07:20-08:00: worked on pat popup frontend 
+09:00-10:20: worked on pat poup frontend and added some more columns in patients table
+10:30-11:30: worked on header of the frontend
