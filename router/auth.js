@@ -1,7 +1,16 @@
 const dbPool = require("../dbConfig");
 const express = require("express");
 const bcryptjs = require("bcryptjs");
-var jwt = require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
+const Mailgun = require("mailgun.js");
+const formData = require("form-data");
+
+const mailgun = new Mailgun(formData);
+const mg = mailgun.client({
+  username: "api",
+  key: "51af62a1b0240822d4732574b7b517ff-78651cec-7280a45e",
+});
+
 let router = express.Router();
 
 // signup
@@ -100,5 +109,60 @@ router.get("/token", (req, res) => {
   } catch (err) {
     return res.status(400).send(err.message);
   }
+});
+
+router.post("/reqreset", (req, res) => {
+  let { email } = req.body;
+  let data;
+  dbPool.query(
+    "SELECT * FROM users WHERE email = $1",
+    [email],
+    (err, response) => {
+      if (err) {
+        return res.status(400).send(err.stack);
+      } else {
+        data = response.rows[0];
+        if (data === undefined) {
+          return res.status(400).send("email does not exists");
+        }
+      }
+    }
+  );
+  // let id = data.id;
+
+  mg.messages
+    .create("sandbox3d8591575fb44c8998b1b48fee38b451.mailgun.org", {
+      from: "Mailgun Sandbox <shaikhmointest@gmail.com>",
+      to: [email],
+      subject: "Reset Password",
+      text: `password reset link : http://localhost:3000/reset/${email}`,
+      html: `password reset link : <a href=http://localhost:3000/reset/${email}>Click on link to reset </a>`,
+    })
+    .then((msg) => {
+      console.log(msg);
+      res.status(200).send("link sent");
+    }) // logs response data
+    .catch((err) => {
+      console.log(err);
+      res.status(400).send(err);
+    });
+});
+
+router.post("/:email/resetpass",async (req, res) => {
+  let email = req.params.email;
+  let { password } = req.body;
+  let salt = await bcryptjs.genSalt(10);
+  let hash = await bcryptjs.hash(password, salt);
+  dbPool.query(
+    "UPDATE users SET password=$1 WHERE email = $2",
+    [hash, email],
+    (err, response) => {
+      if (err) {
+        return res.status(400).send(err.stack);
+      } else {
+        return res.status(200).json("Password reset successfully");
+      }
+    }
+  );
 });
 module.exports = router;

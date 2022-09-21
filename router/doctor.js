@@ -7,15 +7,32 @@ let router = express.Router();
 //create doctor field
 router.post("/new", async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,TimeSlots jsonb )"
+    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC )"
   );
 
-  const { docId, Qualification, Experience, Location, Speciality, TimeSlots } =
-    req.body;
+  const {
+    docId,
+    qualification,
+    experience,
+    location,
+    speciality,
+    hospital,
+    contact,
+    timeSlots,
+  } = req.body;
   console.log(req.body);
   dbPool.query(
-    `INSERT INTO doctors(docId,Qualification,Experience,Location,Speciality,TimeSlots) VALUES($1,$2,$3,$4,$5,$6) RETURNING *`,
-    [docId, Qualification, Experience, Location, Speciality, TimeSlots],
+    `INSERT INTO doctors(docId,Qualification,Experience,Location,Speciality,Hospital,Contact,TimeSlots) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+    [
+      docId,
+      qualification,
+      experience,
+      location,
+      speciality,
+      hospital,
+      contact,
+      timeSlots,
+    ],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
@@ -71,15 +88,17 @@ router.post("/:docId/update", (req, res) => {
 });
 
 // function time_convert(num)
-//  { 
-//   var hours = Math.floor(num / 60);  
+//  {
+//   var hours = Math.floor(num / 60);
 //   var minutes = num % 60;
-//   return hours + ":" + minutes;         
+//   return hours + ":" + minutes;
 // }
 
 // console.log(time_convert(71));
 // console.log(time_convert(450));
 // console.log(time_convert(1441));
 
+// 2 | 2001  | BDS           |          3 | Nashik,Maharashta,India | BDS         | {"mon": [[11, 1]]}
+//   1 | 2000  | MBBS          |          3 | Nashik,Maharashta,India | Orthopedics | {"mon": [[600, 780]]}
 
 module.exports = router;
