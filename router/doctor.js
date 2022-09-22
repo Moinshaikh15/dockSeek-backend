@@ -7,7 +7,7 @@ let router = express.Router();
 //create doctor field
 router.post("/new", async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC )"
+    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC,name VARCHAR ,fees NUMERIC)"
   );
 
   const {
@@ -19,12 +19,15 @@ router.post("/new", async (req, res) => {
     hospital,
     contact,
     timeSlots,
+    name,
+    fees,
   } = req.body;
   console.log(req.body);
   dbPool.query(
-    `INSERT INTO doctors(docId,Qualification,Experience,Location,Speciality,Hospital,Contact,TimeSlots) VALUES($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+    `INSERT INTO doctors(docId,name,Qualification,Experience,Location,Speciality,Hospital,Contact,TimeSlots,fees) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
     [
       docId,
+      name,
       qualification,
       experience,
       location,
@@ -32,6 +35,7 @@ router.post("/new", async (req, res) => {
       hospital,
       contact,
       timeSlots,
+      fees,
     ],
     (err, response) => {
       if (err) {
@@ -49,9 +53,40 @@ router.get("/", (req, res) => {
     if (err) {
       return res.status(400).send(err.stack);
     } else {
-      return res.status(200).send(response.rows);
+      let data = response.rows;
+
+      let days = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
+      let getTimeSlots = (day, timeSlots) => {
+        let slots = [];
+        timeSlots[day]?.map((el) => {
+          for (let i = el[0]; i < el[1]; i += 30) {
+            slots.push(timeConvert(i));
+          }
+        });
+        timeSlots[day] = [...slots];
+        return timeSlots[day];
+      };
+      data.map((doc) => {
+        days.map((day) => {
+          if (
+            doc.timeslots[day]?.length !== 0 &&
+            doc.timeslots[day]?.length !== undefined
+          ) {
+            doc.timeslots[day] = getTimeSlots(day, doc.timeslots);
+            console.log(doc.timeslots[day]);
+          }
+        });
+      });
+
+      return res.status(200).send(data);
     }
   });
+
+  function timeConvert(num) {
+    var hours = Math.floor(num / 60);
+    var minutes = num % 60;
+    return hours + ":" + minutes;
+  }
 });
 
 // get doctor Info
@@ -73,10 +108,11 @@ router.get("/:docId", (req, res) => {
 //update timeSlots
 router.post("/:docId/update", (req, res) => {
   let docId = req.params.docId;
-  let { TimeSlots } = req.body;
+  let { timeSlots } = req.body;
+  console.log(timeSlots)
   dbPool.query(
-    "UPDATE doctors SET TimeSlots=$1 WHERE docId = $2",
-    [TimeSlots, docId],
+    "UPDATE doctors SET timeSlots=$1 WHERE docId = $2",
+    [timeSlots, docId],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
@@ -98,7 +134,6 @@ router.post("/:docId/update", (req, res) => {
 // console.log(time_convert(450));
 // console.log(time_convert(1441));
 
-// 2 | 2001  | BDS           |          3 | Nashik,Maharashta,India | BDS         | {"mon": [[11, 1]]}
-//   1 | 2000  | MBBS          |          3 | Nashik,Maharashta,India | Orthopedics | {"mon": [[600, 780]]}
+
 
 module.exports = router;
