@@ -45,5 +45,6 @@ Estimated time:8hrs
 02:10-03:00: worked on timeslots
 03:20-04:40: worked on timeslots getting time in hrs format
 04:55-05:40: worked on getting endtime of appointment
-07:10-08:00:
+07:10-08:00: worked on time slots
+10:15-11:35: made some changes with timeslots 
 
