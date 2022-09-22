@@ -1,6 +1,7 @@
 const dbPool = require("../dbConfig");
 const express = require("express");
 const { json } = require("express");
+const { compare } = require("bcryptjs");
 
 let router = express.Router();
 
@@ -58,22 +59,18 @@ router.get("/", (req, res) => {
       let days = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
       let getTimeSlots = (day, timeSlots) => {
         let slots = [];
-        timeSlots[day]?.map((el) => {
+        timeSlots[day].available?.map((el) => {
           for (let i = el[0]; i < el[1]; i += 30) {
             slots.push(timeConvert(i));
           }
         });
-        timeSlots[day] = [...slots];
+        timeSlots[day].available = [...slots];
         return timeSlots[day];
       };
       data.map((doc) => {
         days.map((day) => {
-          if (
-            doc.timeslots[day]?.length !== 0 &&
-            doc.timeslots[day]?.length !== undefined
-          ) {
+          if (doc.timeslots[day].available?.length !== 0) {
             doc.timeslots[day] = getTimeSlots(day, doc.timeslots);
-            console.log(doc.timeslots[day]);
           }
         });
       });
@@ -109,7 +106,6 @@ router.get("/:docId", (req, res) => {
 router.post("/:docId/update", (req, res) => {
   let docId = req.params.docId;
   let { timeSlots } = req.body;
-  console.log(timeSlots)
   dbPool.query(
     "UPDATE doctors SET timeSlots=$1 WHERE docId = $2",
     [timeSlots, docId],
@@ -133,7 +129,5 @@ router.post("/:docId/update", (req, res) => {
 // console.log(time_convert(71));
 // console.log(time_convert(450));
 // console.log(time_convert(1441));
-
-
 
 module.exports = router;

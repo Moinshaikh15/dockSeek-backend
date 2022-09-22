@@ -6,7 +6,7 @@ let router = express.Router();
 //create doctor field
 router.post("/new", async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS appointments(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), docName VARCHAR NOT NULL, patName VARCHAR NOT NULL,date DATE, startTime NUMERIC NOT NULL,endTime NUMERIC NOT NULL,flag VARCHAR DEFAULT 'pending',fees NUMERIC)"
+    "CREATE TABLE IF NOT EXISTS appointments(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), docName VARCHAR NOT NULL, patName VARCHAR NOT NULL,date DATE, startTime VARCHAR NOT NULL,endTime VARCHAR NOT NULL,flag VARCHAR DEFAULT 'pending',fees NUMERIC)"
   );
 
   const {
