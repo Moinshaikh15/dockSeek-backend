@@ -55,8 +55,36 @@ router.get("/", (req, res) => {
       return res.status(400).send(err.stack);
     } else {
       let data = response.rows;
+      const d = new Date();
+      let todaysDay = d.getDay();
+      let todaysDate = d.getDate();
+      let days = ["Sun", "Mon", "Tue", "Wed", "Thur", "Fri", "Sat"];
+      let todaysFullDate = (selectedDay) => {
+        let diff = days.indexOf(selectedDay) - todaysDay;
+        if (diff < 0) {
+          diff = days.indexOf(selectedDay) + (7 - todaysDay);
+        }
+        let d = new Date();
+        let totalDaysOfMonth = new Date(
+          d.getFullYear(),
+          d.getMonth() + 2,
+          0
+        ).getDate();
 
-      let days = ["Mon", "Tue", "Wed", "Thur", "Fri", "Sat", "Sun"];
+        let day = d.getDate() + diff;
+        let month = d.getMonth() + 1;
+        let year = d.getFullYear();
+
+        if (totalDaysOfMonth < day) {
+          month += 1;
+          day -= totalDaysOfMonth;
+        }
+        if (month.length < 2) month = "0" + month;
+        if (day.length < 2) day = "0" + day;
+
+        return [day, month, year].join("-");
+      };
+
       let getTimeSlots = (day, timeSlots) => {
         let slots = [];
         timeSlots[day].available?.map((el) => {
@@ -64,14 +92,17 @@ router.get("/", (req, res) => {
             slots.push(timeConvert(i));
           }
         });
+        timeSlots[day].bookedDate =
+          timeSlots[day].bookedDate < todaysFullDate(days[todaysDay])
+            ? []
+            : timeSlots[day].bookedDate;
         timeSlots[day].available = [...slots];
+        timeSlots[day].date = todaysFullDate(day);
         return timeSlots[day];
       };
       data.map((doc) => {
         days.map((day) => {
-          if (doc.timeslots[day].available?.length !== 0) {
-            doc.timeslots[day] = getTimeSlots(day, doc.timeslots);
-          }
+          doc.timeslots[day] = getTimeSlots(day, doc.timeslots);
         });
       });
 
@@ -117,6 +148,37 @@ router.post("/:docId/update", (req, res) => {
       }
     }
   );
+});
+//book slot for doc
+router.post("/:docid/bookslot", (req, res) => {
+  let docId = req.params.docid;
+  let { slot, day, date } = req.body;
+  let timeSlots;
+  dbPool.query(
+    "SELECT timeslots FROM doctors WHERE docId = $1",
+    [docId],
+    (err, response) => {
+      if (err) {
+        // return res.status(400).send(err.stack);
+      } else {
+        timeSlots = response.rows[0].timeslots;
+        timeSlots[day].booked.push(slot);
+        timeSlots[day].bookedDate = date;
+        dbPool.query(
+          "UPDATE doctors SET timeSlots=$1 WHERE docId = $2",
+          [timeSlots, docId],
+          (err, response) => {
+            if (err) {
+              return res.status(400).send(err.stack);
+            } else {
+              return res.status(200).send(response.rows[0]);
+            }
+          }
+        );
+      }
+    }
+  );
+  console.log(timeSlots);
 });
 
 // function time_convert(num)

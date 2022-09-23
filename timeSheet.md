@@ -37,7 +37,7 @@ total time spent:
 
 Estimated time:8hrs
 
-21 sep 22
+22 sep 22
 
 08:30-09:10: worked adding past health issues field
 09:45-01-08: worked on home page axios
@@ -46,5 +46,15 @@ Estimated time:8hrs
 03:20-04:40: worked on timeslots getting time in hrs format
 04:55-05:40: worked on getting endtime of appointment
 07:10-08:00: worked on time slots
-10:15-11:35: made some changes with timeslots 
+10:15-11:35: made some changes with timeslots
 
+---
+
+## Finshing booking part and some ui
+
+Estimated time:8hrs
+
+22 sep 22
+10:30-01:05:worked on time slots showing date and blocking booked ones and showing appointments
+2:30-05:00: worked on canceling and adding notes to appointment and showing next seven days in slots
+5:30-07:00:worked on profile page and search filter
