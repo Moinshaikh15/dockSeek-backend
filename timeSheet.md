@@ -58,3 +58,4 @@ Estimated time:8hrs
 10:30-01:05:worked on time slots showing date and blocking booked ones and showing appointments
 2:30-05:00: worked on canceling and adding notes to appointment and showing next seven days in slots
 5:30-07:00:worked on profile page and search filter
+9:30-11:30:worked styling login,signup and onboarding pages
