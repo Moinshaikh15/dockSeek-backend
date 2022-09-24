@@ -144,7 +144,7 @@ router.post("/reqreset", (req, res) => {
 
   mg.messages
     .create("sandbox3d8591575fb44c8998b1b48fee38b451.mailgun.org", {
-      from: "Mailgun Sandbox <shaikhmointest@gmail.com>",
+      from: "DockSeek Security <shaikhmointest@gmail.com>",
       to: [email],
       subject: "Reset Password",
       text: `password reset link : http://localhost:3000/reset/${code}`,

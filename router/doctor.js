@@ -2,13 +2,23 @@ const dbPool = require("../dbConfig");
 const express = require("express");
 const { json } = require("express");
 const { compare } = require("bcryptjs");
+const multer = require("multer");
 
 let router = express.Router();
 
+let storage = multer.diskStorage({
+  destination: function (req, res, cb) {
+    cb(null, "public/uploads");
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + "-" + file.originalname);
+  },
+});
+const uploads = multer({ storage: storage });
 //create doctor field
-router.post("/new", async (req, res) => {
+router.post("/new", uploads.single("img"), async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC,name VARCHAR ,fees NUMERIC)"
+    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC,name VARCHAR ,fees NUMERIC,img VARCHAR)"
   );
 
   const {
@@ -24,8 +34,15 @@ router.post("/new", async (req, res) => {
     fees,
   } = req.body;
   console.log(req.body);
+  let imgUrl = req.file
+    ? process.env.BASE_URL + "uploads/" + req.file.filename
+    : "";
+    //let copyslots=timeSlots
+   let copyslots = JSON.parse(timeSlots);
+  console.log(copyslots)
+  console.log(req.body, imgUrl);
   dbPool.query(
-    `INSERT INTO doctors(docId,name,Qualification,Experience,Location,Speciality,Hospital,Contact,TimeSlots,fees) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+    `INSERT INTO doctors(docId,name,Qualification,Experience,Location,Speciality,Hospital,Contact,TimeSlots,fees,img) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
     [
       docId,
       name,
@@ -35,8 +52,9 @@ router.post("/new", async (req, res) => {
       speciality,
       hospital,
       contact,
-      timeSlots,
+      copyslots,
       fees,
+      imgUrl,
     ],
     (err, response) => {
       if (err) {
@@ -136,10 +154,10 @@ router.get("/:docId", (req, res) => {
 //update timeSlots
 router.post("/:docId/update", (req, res) => {
   let docId = req.params.docId;
-  let { timeSlots } = req.body;
+  let { fees } = req.body;
   dbPool.query(
-    "UPDATE doctors SET timeSlots=$1 WHERE docId = $2",
-    [timeSlots, docId],
+    "UPDATE doctors SET fees=$1 WHERE docId = $2",
+    [fees, docId],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);

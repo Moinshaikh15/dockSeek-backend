@@ -6,7 +6,7 @@ let router = express.Router();
 //create doctor field
 router.post("/new", async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS appointments(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), docName VARCHAR NOT NULL, patName VARCHAR NOT NULL,date VARCHAR, startTime VARCHAR NOT NULL,endTime VARCHAR NOT NULL,flag VARCHAR DEFAULT 'pending',fees NUMERIC)"
+    "CREATE TABLE IF NOT EXISTS appointments(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), docName VARCHAR NOT NULL, patName VARCHAR NOT NULL,date VARCHAR,day VARCHAR, startTime VARCHAR NOT NULL,endTime VARCHAR NOT NULL,flag VARCHAR DEFAULT 'pending',fees NUMERIC)"
   );
 
   const {
@@ -19,11 +19,12 @@ router.post("/new", async (req, res) => {
     endTime,
     flag,
     fees,
+    day,
   } = req.body;
   console.log(req.body);
   dbPool.query(
-    `INSERT INTO appointments(docId,patId,docName,patName,date,startTime,endTime,flag,fees) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9) RETURNING *`,
-    [docId, patId, docName, patName, date, startTime, endTime, flag, fees],
+    `INSERT INTO appointments(docId,patId,docName,patName,date,day,startTime,endTime,flag,fees) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,
+    [docId, patId, docName, patName, date, day, startTime, endTime, flag, fees],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);

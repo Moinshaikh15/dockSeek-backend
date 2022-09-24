@@ -54,8 +54,22 @@ Estimated time:8hrs
 
 Estimated time:8hrs
 
-22 sep 22
+23 sep 22
+
 10:30-01:05:worked on time slots showing date and blocking booked ones and showing appointments
 2:30-05:00: worked on canceling and adding notes to appointment and showing next seven days in slots
 5:30-07:00:worked on profile page and search filter
 9:30-11:30:worked styling login,signup and onboarding pages
+
+## Styling ui and showing img for doc
+
+Estimated time:8hrs
+
+24 sep 22
+
+12:5-01:20 worked on adding img for doc
+02:30-05:35 worked on home page ui and started working appointmenst page ui
+06:25-08:17 worked on ui of appointments page and appoinments booking page
+09:00-09:55 worked on profile page ui and styled notes part of appointments page
+
+---
