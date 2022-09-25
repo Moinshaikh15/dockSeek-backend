@@ -62,7 +62,7 @@ router.get("/:appointmentId", (req, res) => {
   );
 });
 
-//update timeSlots
+//update flag status
 router.post("/:appointmentId/update", (req, res) => {
   let appointmentId = req.params.appointmentId;
   let { flag } = req.body;

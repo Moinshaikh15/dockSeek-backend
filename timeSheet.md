@@ -29,7 +29,7 @@ Estimated time:8hrs
 09:00-10:20: worked on pat poup frontend and added some more columns in patients table
 10:30-11:30: worked on header of the frontend
 
-total time spent:
+total time spent:8hrs 2min
 
 ---
 
@@ -48,6 +48,8 @@ Estimated time:8hrs
 07:10-08:00: worked on time slots
 10:15-11:35: made some changes with timeslots
 
+total time spent:9hrs 28min
+
 ---
 
 ## Finshing booking part and some ui
@@ -61,23 +63,36 @@ Estimated time:8hrs
 5:30-07:00:worked on profile page and search filter
 9:30-11:30:worked styling login,signup and onboarding pages
 
+total time spent:8hrs 35min
+
+---
+
 ## Styling ui and showing img for doc
 
 Estimated time:8hrs
 
 24 sep 22
 
-12:5-01:20 worked on adding img for doc
+12:05-01:20 worked on adding img for doc
 02:30-05:35 worked on home page ui and started working appointmenst page ui
 06:25-08:17 worked on ui of appointments page and appoinments booking page
 09:00-09:55 worked on profile page ui and styled notes part of appointments page
 
+total time spent:6hrs 7min
+
 ---
 
-## 
+## Fixing issues and make profile editable
 
 Estimated time:8hrs
 
 25 sep 22
-11:30-01:00 worked on fixing some issues in showing docs 
-1:35
+11:30-01:00 worked on fixing some issues in showing docs
+01:35-5:30: worked on adding editing profile function for doc and patient and it's ui and showing appointments on basic of time
+06:00-07:25: worked on adding earnings and adding done flag function
+
+total time spent:7hrs
+
+---
+
+53hrs,12min

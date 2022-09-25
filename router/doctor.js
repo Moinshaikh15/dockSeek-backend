@@ -18,7 +18,7 @@ const uploads = multer({ storage: storage });
 //create doctor field
 router.post("/new", uploads.single("img"), async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC,name VARCHAR ,fees NUMERIC,img VARCHAR)"
+    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC DEFAULT 0,name VARCHAR ,fees NUMERIC,img VARCHAR)"
   );
 
   const {
@@ -37,9 +37,9 @@ router.post("/new", uploads.single("img"), async (req, res) => {
   let imgUrl = req.file
     ? process.env.BASE_URL + "uploads/" + req.file.filename
     : "";
-    //let copyslots=timeSlots
-   let copyslots = JSON.parse(timeSlots);
-  console.log(copyslots)
+  //let copyslots=timeSlots
+  let copyslots = JSON.parse(timeSlots);
+  console.log(copyslots);
   console.log(req.body, imgUrl);
   dbPool.query(
     `INSERT INTO doctors(docId,name,Qualification,Experience,Location,Speciality,Hospital,Contact,TimeSlots,fees,img) VALUES($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
@@ -151,22 +151,40 @@ router.get("/:docId", (req, res) => {
   );
 });
 
-//update timeSlots
-router.post("/:docId/update", (req, res) => {
+//update earnings
+router.post("/:docId/addearnings", (req, res) => {
   let docId = req.params.docId;
   let { fees } = req.body;
   dbPool.query(
-    "UPDATE doctors SET fees=$1 WHERE docId = $2",
+    "UPDATE doctors SET earning = earning + $1 WHERE docId = $2",
     [fees, docId],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
       } else {
-        return res.status(200).send(response.rows[0]);
+        return res.status(200).send("successfully added");
       }
     }
   );
 });
+
+//add rating
+router.post("/:docId/addratings", (req, res) => {
+  let docId = req.params.docId;
+  let { newRatings } = req.body;
+  dbPool.query(
+    "UPDATE doctors SET rating = 0 WHERE docId = $1",
+    [ docId],
+    (err, response) => {
+      if (err) {
+        return res.status(400).send(err.stack);
+      } else {
+        return res.status(200).send("successfully added");
+      }
+    }
+  );
+});
+
 //book slot for doc
 router.post("/:docid/bookslot", (req, res) => {
   let docId = req.params.docid;
@@ -199,6 +217,23 @@ router.post("/:docid/bookslot", (req, res) => {
   console.log(timeSlots);
 });
 
+// edit profile
+router.post("/:docId/edit", (req, res) => {
+  let docId = req.params.docId;
+  let { qualification, speciality, experience, hospital } = req.body;
+
+  dbPool.query(
+    "UPDATE doctors SET qualification=$1, speciality=$2, experience=$3, hospital=$4   WHERE docid = $5",
+    [qualification, speciality, experience, hospital, docId],
+    (err, response) => {
+      if (err) {
+        return res.status(400).send(err.stack);
+      } else {
+        return res.status(200).send(response.rows[0]);
+      }
+    }
+  );
+});
 // function time_convert(num)
 //  {
 //   var hours = Math.floor(num / 60);

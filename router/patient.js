@@ -39,7 +39,7 @@ router.get("/:patId", (req, res) => {
     }
   );
 });
-router.get("/:patId/edit", (req, res) => {
+router.post("/:patId/edit", (req, res) => {
   let patId = req.params.patId;
   let { age, weight, gender, bloodGroup } = req.body;
 
