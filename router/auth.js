@@ -136,9 +136,7 @@ router.post("/reqreset", (req, res) => {
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
-      } 
-       
-      
+      }
     }
   );
 
@@ -152,11 +150,11 @@ router.post("/reqreset", (req, res) => {
     })
     .then((msg) => {
       console.log(msg);
-     return res.status(200).send("link sent");
+      return res.status(200).send("link sent");
     }) // logs response data
     .catch((err) => {
-      console.log('err',err);
-    return  res.status(400).send(err);
+      console.log("err", err);
+      return res.status(400).send(err);
     });
 });
 

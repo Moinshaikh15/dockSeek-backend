@@ -73,3 +73,11 @@ Estimated time:8hrs
 09:00-09:55 worked on profile page ui and styled notes part of appointments page
 
 ---
+
+## 
+
+Estimated time:8hrs
+
+25 sep 22
+11:30-01:00 worked on fixing some issues in showing docs 
+1:35

@@ -39,5 +39,21 @@ router.get("/:patId", (req, res) => {
     }
   );
 });
+router.get("/:patId/edit", (req, res) => {
+  let patId = req.params.patId;
+  let { age, weight, gender, bloodGroup } = req.body;
+
+  dbPool.query(
+    "UPDATE patients SET age=$1, weight=$2, gender=$3, bloodGroup=$4   WHERE patid = $5",
+    [age, weight, gender, bloodGroup, patId],
+    (err, response) => {
+      if (err) {
+        return res.status(400).send(err.stack);
+      } else {
+        return res.status(200).send(response.rows[0]);
+      }
+    }
+  );
+});
 
 module.exports = router;
