@@ -6,7 +6,7 @@ let router = express.Router();
 //create doctor field
 router.post("/new", async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS appointments(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), docName VARCHAR NOT NULL, patName VARCHAR NOT NULL,date VARCHAR,day VARCHAR, startTime VARCHAR NOT NULL,endTime VARCHAR NOT NULL,flag VARCHAR DEFAULT 'pending',fees NUMERIC)"
+    "CREATE TABLE IF NOT EXISTS appointments(id SERIAL PRIMARY KEY,docId VARCHAR(20),patId VARCHAR(20), docName VARCHAR NOT NULL, patName VARCHAR NOT NULL,date VARCHAR,day VARCHAR, startTime VARCHAR NOT NULL,endTime VARCHAR NOT NULL,flag VARCHAR DEFAULT 'pending',fees NUMERIC,rating NUMERIC DEFAULT 0,note VARCHAR)"
   );
 
   const {
@@ -91,6 +91,23 @@ router.post("/:appointmentId/addnote", (req, res) => {
         return res.status(400).send(err.stack);
       } else {
         return res.status(200).send(response.rows[0]);
+      }
+    }
+  );
+});
+//add rating
+router.post("/:id/addratings", (req, res) => {
+  let id = req.params.id;
+  let {ratings } = req.body;
+  
+  dbPool.query(
+    "UPDATE appointments SET rating = $2  WHERE id = $1",
+    [ id,ratings],
+    (err, response) => {
+      if (err) {
+        return res.status(400).send(err.stack);
+      } else {
+        return res.status(200).send("successfully added");
       }
     }
   );

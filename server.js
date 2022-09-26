@@ -12,9 +12,10 @@ app.use(morgan("tiny"));
 app.use(express.urlencoded({ extended: false }));
 
 app.listen(process.env.PORT || 8000, () => {
-  console.log("app running",process.env.PORT);
+  console.log("app running");
 });
 app.use(cors());
+app.use(express.static('public'))
 app.use(express.json());
 app.use("/auth", authRouter);
 app.use(authenticateRequest);

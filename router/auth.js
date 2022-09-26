@@ -93,7 +93,7 @@ router.post("/login", (req, res) => {
 });
 
 // Token
-router.get("/token", (req, res) => {
+router.post("/token", (req, res) => {
   let refreshToken = req.body.token;
   if (!refreshToken) {
     return res.status(400).send("please provide refresh token");

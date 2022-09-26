@@ -95,4 +95,14 @@ total time spent:7hrs
 
 ---
 
-53hrs,12min
+## Finishing app completely
+
+Estimated time:8hrs
+
+26 sep 22
+08:40 - 09:13: worked on showing ratings
+09:40 - 11:15: worked on adding ratings
+11:25 - 12:30: worked on doc's profile page styling
+12:30 - 01:15: worked on using elephant SQL and adding data in it
+02:00- 04:00 : worked of fixing issues
+45hrs,12min

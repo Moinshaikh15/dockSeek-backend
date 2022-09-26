@@ -18,7 +18,7 @@ const uploads = multer({ storage: storage });
 //create doctor field
 router.post("/new", uploads.single("img"), async (req, res) => {
   await dbPool.query(
-    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC DEFAULT 0,name VARCHAR ,fees NUMERIC,img VARCHAR)"
+    "CREATE TABLE IF NOT EXISTS doctors(id SERIAL PRIMARY KEY,docId VARCHAR(20), Qualification VARCHAR NOT NULL, Experience NUMERIC NOT NULL,Location VARCHAR, Speciality VARCHAR,Hospital VARCHAR,Contact VARCHAR, TimeSlots jsonb,Earning NUMERIC DEFAULT 0,rating NUMERIC DEFAULT 0,name VARCHAR ,fees NUMERIC,img VARCHAR)"
   );
 
   const {
@@ -171,10 +171,11 @@ router.post("/:docId/addearnings", (req, res) => {
 //add rating
 router.post("/:docId/addratings", (req, res) => {
   let docId = req.params.docId;
-  let { newRatings } = req.body;
+  let { newRating } = req.body;
+  console.log(newRating)
   dbPool.query(
-    "UPDATE doctors SET rating = 0 WHERE docId = $1",
-    [ docId],
+    "UPDATE doctors SET rating = ( rating + $2 ) / 2  WHERE docId = $1",
+    [ docId,newRating],
     (err, response) => {
       if (err) {
         return res.status(400).send(err.stack);
